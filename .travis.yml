@@ -1,0 +1,20 @@
+language: cpp
+
+before_script:
+    - export _PROJECT_NAME=$(cat .project_name) 
+    - export _PROJECT_VERSION=$(cat .version)
+    - export _PROJECT_DEB_NAME="$_PROJECT_NAME-$_PROJECT_VERSION.$TRAVIS_BUILD_NUMBER-Linux.deb"
+    - sudo apt-get install libboost-test-dev -y
+
+
+script:
+    - cmake .
+    - cmake --build .
+    - env CTEST_OUTPUT_ON_FAILURE=1 BOOST_TEST_LOG_LEVEL=all cmake --build . --target test
+    - cmake --build . --target package
+
+deploy:
+    provider: script
+    skip_cleanup: true
+    script:
+        - curl -T $_PROJECT_DEB_NAME -umalegkin:$BINTRAY_API_KEY "https://api.bintray.com/content/otus-malegkin/otus/$_PROJECT_NAME/$TRAVIS_BUILD_NUMBER/$_PROJECT_DEB_NAME;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
