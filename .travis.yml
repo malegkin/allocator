@@ -1,5 +1,19 @@
 language: cpp
 
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - doxygen
+            - graphviz
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
 before_script:
     - export _PROJECT_NAME=$(cat .project_name) 
     - export _PROJECT_VERSION=$(cat .version)
