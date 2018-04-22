@@ -47,16 +47,14 @@ public:
         if (n > 1)
             throw new bad_alloc();
         
-        item_allocated_count++;        
-    
-        
         size_t block_id = item_allocated_count / item_per_block;        
         size_t item_id  = item_allocated_count % item_per_block;
 
         if ( block_id >= blocks.size() )
             blocks.push_back( block() );
 
-
+        item_allocated_count++;
+        
         return blocks[block_id][item_id];
     }
 
