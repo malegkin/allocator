@@ -2,6 +2,15 @@
 
 #include "stdafx.h"
 #include <vector>
+#include <map>
+
+constexpr uint64_t factorial(const size_t n)
+{
+    return (n < 2) ? 1 : factorial(n - 1) * n ;
+}
+
+
+//block_allocator
 
 template < typename T, size_t item_per_block = 10 >
 class block_allocator {
@@ -28,7 +37,7 @@ public:
     };
 
     vector< block > blocks;
-    size_t item_allocated_count;
+    size_t item_allocated_count = 0;
         
 
     template<typename U>
@@ -75,6 +84,12 @@ public:
         p->~T();
     }
 };
+
+/////////////////////////////////////////////////////////////////
+// otus_map
+template < typename Key, typename T >
+using otus_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
+
 
 
 /////////////////////////////////////////////////////////////////

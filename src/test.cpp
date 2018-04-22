@@ -8,18 +8,23 @@
 
 BOOST_AUTO_TEST_SUITE( test_suite_main )
 
-BOOST_AUTO_TEST_CASE( test_block_allocator )
-{
-    map< uint32_t, uint32_t, less<uint32_t>, block_allocator< pair< const uint32_t, uint32_t >, 10 >> om;
-    om[5] = 10;
-    //for (uint32_t i = 0; i < 100; i++){
-    //    om[i] = i ;
-   // }
-//
-//    for ( const auto &pair : om ) {
-//        BOOST_REQUIRE( pair.first  == pair.second);        
-//    }
-}
+    BOOST_AUTO_TEST_CASE( test_factorial_foo ) {
+        BOOST_REQUIRE( factorial(0)  == 1 );
+        BOOST_REQUIRE( factorial(1)  == 1 );
+        BOOST_REQUIRE( factorial(2)  == 2 );
+        BOOST_REQUIRE( factorial(3)  == 6 );
+        BOOST_REQUIRE( factorial(4)  == 24 );
+        BOOST_REQUIRE( factorial(5)  == 120 );
+        BOOST_REQUIRE( factorial(20)  == 2432902008176640000 );
+
+    }
+
+    BOOST_AUTO_TEST_CASE( test_otus_map )
+    {
+        otus_map< uint8_t, uint64_t > om;
+        om[0] = 10;
+        BOOST_REQUIRE(om[0] = 10);
+    }
 
 
 BOOST_AUTO_TEST_SUITE_END()
