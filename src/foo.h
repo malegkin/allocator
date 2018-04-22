@@ -60,8 +60,10 @@ public:
         return blocks[block_id][item_id];
     }
 
-    void deallocate(T *p, size_t n){
-    }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+    void deallocate(T *p, size_t n){}
+#pragma GCC diagnostic pop
 
     void reserve( size_t n ) {
         blocks.reserve( n / item_per_block );
@@ -83,9 +85,9 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////
-// otus_map
+// block_allocated_map
 template < typename Key, typename T >
-using otus_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
+using block_allocated_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
 
 
 
@@ -181,3 +183,7 @@ public:
 };
 
 
+/////////////////////////////////////////////////////////////////
+// block_allocated_list
+template < typename T >
+using block_allocated_list = otus_list< T, block_allocator< T, 10 >>;

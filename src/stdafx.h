@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <numeric>
 
 #include "boost/format.hpp"
 
