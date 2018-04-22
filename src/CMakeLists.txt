@@ -1,7 +1,7 @@
 ###
 #global
 
-    find_package(Boost COMPONENTS unit_test_framework  filesystem REQUIRED)
+    find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
     set(CMAKE_CXX_FLAGS "-Wall -Wextra")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -15,7 +15,7 @@
 #Unit tests
     add_executable(test_foo test.cpp)
     add_test(test_foo test_foo )
-#    set_tests_properties(test_foo PROPERTIES TIMEOUT 30 )
+    set_tests_properties(test_foo PROPERTIES TIMEOUT 30 )
         target_link_libraries(  test_foo
                             ${Boost_LIBRARIES}
                             foo
