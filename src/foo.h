@@ -1,14 +1,11 @@
 #pragma once
 
 #include "stdafx.h"
-#include <vector>
-#include <map>
 
 constexpr uint64_t factorial(const size_t n)
 {
     return (n < 2) ? 1 : factorial(n - 1) * n ;
 }
-
 
 //block_allocator
 
