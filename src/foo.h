@@ -141,7 +141,7 @@ struct otus_list_iterator: public iterator< forward_iterator_tag, otus_list_node
 };
 
 
-template <typename T, typename _Alloc = block_allocator< T , 10 >> 
+template <typename T, typename _Alloc = allocator< T >>
 class otus_list {
     using node_type     = otus_list_node<T>;
     using node_pointer  = otus_list_node<T>*;
