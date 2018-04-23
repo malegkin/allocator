@@ -54,7 +54,7 @@ public:
             blocks.push_back( block() );
 
         item_allocated_count++;
-        
+
         return blocks[block_id][item_id];
     }
 

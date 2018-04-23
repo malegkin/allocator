@@ -3,13 +3,6 @@
 #include <map>
 
 
-
-template < typename F, typename S >
-string to_string( pair<F, S> in){
-    return to_string(in.first) + " " + to_string(in.second);
-}
-
-
 int main()
 {
     map< uint8_t, uint64_t > m;
@@ -19,12 +12,12 @@ int main()
 
 
 
-    block_allocated_map< uint8_t, uint64_t > om;
-    for (uint8_t i = 0; i < 10; i++){
+    block_allocated_map< uint32_t, uint64_t > om;
+    for (uint32_t i = 0; i < 10; i++){
         om[i] = factorial(i);
     }
     for (auto a: om){
-        cout << to_string(a) << endl;
+        cout << a.first << " " << a.second << endl;
     }
 
 
