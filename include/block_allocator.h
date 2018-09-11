@@ -2,12 +2,6 @@
 
 #include "stdafx.h"
 
-constexpr uint64_t factorial(const size_t n)
-{
-    return (n < 2) ? 1 : factorial(n - 1) * n ;
-}
-
-//block_allocator
 
 template < typename T, size_t item_per_block = 10 >
 class block_allocator {
@@ -81,6 +75,7 @@ public:
         p->~T();
     }
 };
+
 
 /////////////////////////////////////////////////////////////////
 // block_allocated_map

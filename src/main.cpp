@@ -1,5 +1,7 @@
-#include "stdafx.h"
-#include "foo.h"
+#include "../include/stdafx.h"
+#include "../include/foo.h"
+#include "../include/block_allocator.h"
+
 #include <map>
 
 

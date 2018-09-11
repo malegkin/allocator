@@ -1,12 +1,14 @@
-#include "stdafx.h"
+#include "../include/stdafx.h"
+#include "../include/foo.h"
+#include "../include/block_allocator.h"
 
-#define BOOST_TEST_MODULE test_foo
+#define BOOST_TEST_MODULE test_allocator
 #include <boost/test/unit_test.hpp>
-#include "foo.h"
+
     
 #define LOG_LEVEL all
 
-BOOST_AUTO_TEST_SUITE( test_suite_main )
+BOOST_AUTO_TEST_SUITE( test_suite_foo )
 
     BOOST_AUTO_TEST_CASE( test_factorial_foo ) {
         BOOST_REQUIRE( factorial(0)  == 1 );
@@ -16,8 +18,10 @@ BOOST_AUTO_TEST_SUITE( test_suite_main )
         BOOST_REQUIRE( factorial(4)  == 24 );
         BOOST_REQUIRE( factorial(5)  == 120 );
         BOOST_REQUIRE( factorial(20)  == 2432902008176640000 );
-
     }
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE( test_suite_main )
 
     BOOST_AUTO_TEST_CASE( test_otus_list )
     {
