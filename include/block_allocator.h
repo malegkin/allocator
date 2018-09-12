@@ -56,11 +56,11 @@ public:
 
 
     class block {
-        std::unique_ptr< T, function< void(T*)> > ptr;
+        std::unique_ptr< T[]> ptr;
 
     public:
         block()
-        : ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
+        : ptr( std::make_unique<T[]>(item_per_block))
         {
             std::cout << "block: init unique_pointer: " << ptr.get() << std::endl;
         }
@@ -77,15 +77,28 @@ public:
             if (id >= item_per_block)
                 throw new invalid_argument( "too large index" );
 
-            return ptr.get() + id;
+            return &(ptr[id]);
         }
 
+        void operator delete(void * p)
+        {
+            cout<< "Overloading delete operator " << endl;
+
+        }
+
+        void operator delete[](void * p)
+        {
+            cout<< "Overloading delete operator " << endl;
+
+        }
+
+/*
         ~block()
         {
             if (ptr.get())
                 std::cout << "block: destroy unique_pointer: " << ptr.get() << std::endl;
         }
-
+        */
     };
 
 

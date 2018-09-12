@@ -34,6 +34,7 @@ namespace debug {
 
 
 extern "C++" {
+    /*
     void* operator new(std::size_t size) 
     {
         return debug::malloc(size);
@@ -53,8 +54,9 @@ extern "C++" {
     {
         return debug::malloc(size);
     }
+     */
 
-
+/*
 
     void operator delete(void* p) noexcept
     {
@@ -87,7 +89,7 @@ extern "C++" {
     {
         debug::free(p);
     }
-
+*/
 
 
 }

@@ -15,15 +15,15 @@ namespace debug {
 
 
 extern "C++" {
-
+    /*
     void* operator new(std::size_t size);
     void* operator new(std::size_t size, const std::nothrow_t&) noexcept;
 
     void* operator new[](std::size_t size);
     void* operator new[](std::size_t size, const std::nothrow_t&) noexcept;
-    
+    */
 
-    
+    /*
     void operator delete(void* p) noexcept;
     void operator delete(void* p, long unsigned int) noexcept;
     void operator delete(void* p, const std::nothrow_t&) noexcept;
@@ -31,6 +31,6 @@ extern "C++" {
     void operator delete[](void* p) noexcept; 
     void operator delete[](void* p, long unsigned int) noexcept;
     void operator delete[](void* p, const std::nothrow_t&) noexcept;
-
+    */
 } // extern "C++"
 

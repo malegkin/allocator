@@ -17,11 +17,13 @@ int main()
 */
 
     printf("\n\nmap with block allocator:\n");
-//    block_allocator<pair< uint32_t, uint64_t >, 10 > ba;
+    block_allocator<pair< uint32_t, uint64_t >, 10 > ba;
 
-//    std::cout << ba.allocate(1) << std::endl;
+    std::cout << ba.allocate(1) << std::endl;
 
     block_allocated_map< uint32_t, uint64_t > om;
+    /*
+
 
     for (uint32_t i = 0; i < 22; i++){
         om[i] = factorial(i);
@@ -33,7 +35,7 @@ int main()
     for (auto a: om){
         std::cout << a.first << " " << a.second << std::endl;
     }
-
+*/
     /*
 
     std::cout << "otus list:\n";
