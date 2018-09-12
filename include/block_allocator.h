@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "loggable_memory_management.h"
 
 
 template < typename T, size_t item_per_block = 10 >
@@ -12,23 +13,88 @@ public:
     using reference         = T&;
     using const_reference   = const T&;
 
-    struct block {
-        unique_ptr< T, function< void(T*) >> ptr;
-  
-        block(): 
-            ptr( reinterpret_cast<T*>( malloc( sizeof(T) * item_per_block )), [](T* p){ free(p); })
-        {}
+    /*
+    class block {
+        std::unique_ptr< T[] > ptr;
+        //std::unique_ptr< T*, function< void(T*)> > ptr;
 
-        T* operator[] ( size_t id ){
+        //block& operator=(const block& other) = delete;
+
+    public:
+        block()
+        //: ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
+        //: ptr( std::unique_ptr<T[], [](T* pa){delete[] pa;}>(item_per_block) )
+        //: ptr( std::make_unique<T[]>( item_per_block ))
+        : ptr( new T[item_per_block])
+        {
+            std::cout << "block: init unique_pointer: " << ptr.get() << std::endl;
+        }
+
+        block(block&& o) noexcept
+        : ptr(std::move(o.ptr))
+        {
+            std::cout << "block: move unique_pointer: " << ptr.get() << std::endl;
+        }
+
+        //subscript operator
+        T* operator[] ( std::size_t id )
+        {
             if (id >= item_per_block)
                 throw new invalid_argument( "too large index" );
             
+            return &(ptr[id]);
+        }
+
+        ~block()
+        {
+            if (ptr.get())
+                std::cout << "block: destroy unique_pointer: " << ptr.get() << std::endl;
+        }
+
+    };
+     */
+
+
+    class block {
+        std::unique_ptr< T, function< void(T*)> > ptr;
+
+    public:
+        block()
+        : ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
+        {
+            std::cout << "block: init unique_pointer: " << ptr.get() << std::endl;
+        }
+
+        block(block&& o) noexcept
+                : ptr(std::move(o.ptr))
+        {
+            std::cout << "block: move unique_pointer: " << ptr.get() << std::endl;
+        }
+
+        //subscript operator
+        T* operator[] ( std::size_t id )
+        {
+            if (id >= item_per_block)
+                throw new invalid_argument( "too large index" );
+
             return ptr.get() + id;
         }
+
+        ~block()
+        {
+            if (ptr.get())
+                std::cout << "block: destroy unique_pointer: " << ptr.get() << std::endl;
+        }
+
     };
 
-    vector< block > blocks;
-    size_t item_allocated_count = 0;
+
+
+
+    //using block = array<T, item_per_block>;
+    std::map<std::size_t, block > blocks;
+    //std::vector< block > blocks;
+    uint32_t item_allocated_count = 0;
         
 
     template<typename U>
@@ -38,32 +104,39 @@ public:
 
 
     T* allocate( size_t n ){
-        if (n > 1)
-            throw new bad_alloc();
+        if (n != 1)
+            throw new invalid_argument( "allocate only one block per call" );
         
-        size_t block_id = item_allocated_count / item_per_block;        
-        size_t item_id  = item_allocated_count % item_per_block;
+        uint32_t block_id = item_allocated_count / item_per_block;
+        uint32_t item_id  = item_allocated_count % item_per_block;
 
-        if ( block_id >= blocks.size() )
-            blocks.push_back( block() );
+/*
+        if ( block_id >= blocks.size() ) {
+
+            blocks.push_back( std::move(block()) );
+            //blocks.insert(std::make_pair(block_id, block()));
+        }
+*/
+
+        if ( !blocks.count(block_id) )
+            blocks.insert(std::make_pair(block_id, std::move(block())));
+
 
         item_allocated_count++;
 
         return blocks[block_id][item_id];
     }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
+
     void deallocate(T *p, size_t n){}
-#pragma GCC diagnostic pop
 
     void reserve( size_t n ) {
         blocks.reserve( n / item_per_block );
     }
 
     block_allocator() {
-        reserve( item_per_block );
-        blocks.reserve (10);
+//        reserve( item_per_block );
+//        blocks.reserve (10);
     }
 
     template <typename U, typename ... Args>
@@ -83,7 +156,7 @@ template < typename Key, typename T >
 using block_allocated_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
 
 
-
+/*
 /////////////////////////////////////////////////////////////////
 //template <typename T, typename _Alloc = block_allocator<T, 10 >>
 template <typename T>
@@ -180,3 +253,4 @@ public:
 // block_allocated_list
 template < typename T >
 using block_allocated_list = otus_list< T, block_allocator< T, 10 >>;
+*/

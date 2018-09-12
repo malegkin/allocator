@@ -17,7 +17,7 @@ project (${PROJECT_NAME} VERSION ${PROJECT_VERSION}.${PROJECT_BUILD_NUMBER})
 set(ENV{_TEST_RESOURCES_DIR} "${CMAKE_SOURCE_DIR}/resources")
 
 #set compiler global options
-set( CMAKE_CXX_STANDARD 14 )
+set( CMAKE_CXX_STANDARD 17 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
 
 enable_testing()

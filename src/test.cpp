@@ -1,5 +1,5 @@
 #include "../include/stdafx.h"
-#include "../include/foo.h"
+#include "../include/factorial.h"
 #include "../include/block_allocator.h"
 
 #define BOOST_TEST_MODULE test_allocator
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE( test_suite_foo )
         BOOST_REQUIRE( factorial(20)  == 2432902008176640000 );
     }
 BOOST_AUTO_TEST_SUITE_END()
-
+/*
 BOOST_AUTO_TEST_SUITE( test_suite_main )
 
     BOOST_AUTO_TEST_CASE( test_otus_list )
@@ -64,3 +64,4 @@ BOOST_AUTO_TEST_SUITE( test_suite_main )
     }
 
 BOOST_AUTO_TEST_SUITE_END()
+*/

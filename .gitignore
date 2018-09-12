@@ -1,3 +1,5 @@
+cmake-build-debug
+allocator.code-workspace
 tmp
 .idea
 build
