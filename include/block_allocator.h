@@ -1,10 +1,10 @@
 #pragma once
 
+#include <queue>
 #include "stdafx.h"
 #include "loggable_memory_management.h"
 
-
-template < typename T, size_t item_per_block = 10 >
+ template < typename T, size_t item_per_block = 10, size_t max_available_cells = 100 >
 class block_allocator {
 public:
     using value_type        = T;    
@@ -13,20 +13,19 @@ public:
     using reference         = T&;
     using const_reference   = const T&;
 
-    /*
-    class block {
-        std::unique_ptr< T[] > ptr;
-        //std::unique_ptr< T*, function< void(T*)> > ptr;
+    using available_cells_t = std::queue<T*>;
 
-        //block& operator=(const block& other) = delete;
+    class block {
+        std::unique_ptr<T, function<void(T*)>> ptr;
+
+        std::array<T*, item_per_block> available_cells;
 
     public:
         block()
-        //: ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
-        //: ptr( std::unique_ptr<T[], [](T* pa){delete[] pa;}>(item_per_block) )
-        //: ptr( std::make_unique<T[]>( item_per_block ))
-        : ptr( new T[item_per_block])
+        : ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
         {
+            size_t n = 0;
+            std::generate_n(begin(available_cells), item_per_block, [&n, this](){return ptr.get() + n++;});
             std::cout << "block: init unique_pointer: " << ptr.get() << std::endl;
         }
 
@@ -36,41 +35,13 @@ public:
             std::cout << "block: move unique_pointer: " << ptr.get() << std::endl;
         }
 
-        //subscript operator
-        T* operator[] ( std::size_t id )
-        {
-            if (id >= item_per_block)
-                throw new invalid_argument( "too large index" );
-            
-            return &(ptr[id]);
+        std::array<T*, item_per_block>& get_available_cells(){
+
+
+            return available_cells;
         }
 
-        ~block()
-        {
-            if (ptr.get())
-                std::cout << "block: destroy unique_pointer: " << ptr.get() << std::endl;
-        }
-
-    };
-     */
-
-
-    class block {
-        std::unique_ptr< T, function< void(T*)> > ptr;
-
-    public:
-        block()
-        : ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
-        {
-            std::cout << "block: init unique_pointer: " << ptr.get() << std::endl;
-        }
-
-        block(block&& o) noexcept
-                : ptr(std::move(o.ptr))
-        {
-            std::cout << "block: move unique_pointer: " << ptr.get() << std::endl;
-        }
-
+        /*
         //subscript operator
         T* operator[] ( std::size_t id )
         {
@@ -79,21 +50,18 @@ public:
 
             return ptr.get() + id;
         }
-
+        */
         ~block()
         {
             if (ptr.get())
                 std::cout << "block: destroy unique_pointer: " << ptr.get() << std::endl;
         }
-
     };
 
 
+    available_cells_t available_cells;
+    std::list< block > blocks;
 
-
-    //using block = array<T, item_per_block>;
-    std::map<std::size_t, block > blocks;
-    //std::vector< block > blocks;
     uint32_t item_allocated_count = 0;
         
 
@@ -106,9 +74,20 @@ public:
     T* allocate( size_t n ){
         if (n != 1)
             throw new invalid_argument( "allocate only one block per call" );
+
+
+        std::cout << available_cells.size() << std::endl;
+        std::cout << available_cells.empty() << std::endl;
+
+        if ( !available_cells.size() ){
+            block new_block;
+            auto new_cells = new_block.get_available_cells();
+            available_cells.assign(begin(new_cells), end(new_cells));
+            blocks.push_back(std::move(new_block));
+        }
         
-        uint32_t block_id = item_allocated_count / item_per_block;
-        uint32_t item_id  = item_allocated_count % item_per_block;
+        //uint32_t block_id = item_allocated_count / item_per_block;
+        //uint32_t item_id  = item_allocated_count % item_per_block;
 
 /*
         if ( block_id >= blocks.size() ) {
@@ -118,13 +97,12 @@ public:
         }
 */
 
-        if ( !blocks.count(block_id) )
-            blocks.insert(std::make_pair(block_id, std::move(block())));
 
+//        item_allocated_count++;
 
-        item_allocated_count++;
-
-        return blocks[block_id][item_id];
+        T* out = available_cells.back();
+        available_cells.pop_back();
+        return out;
     }
 
 
@@ -134,9 +112,10 @@ public:
         blocks.reserve( n / item_per_block );
     }
 
-    block_allocator() {
-//        reserve( item_per_block );
-//        blocks.reserve (10);
+    block_allocator()
+    //: available_cells(max_available_cells)
+    {
+
     }
 
     template <typename U, typename ... Args>
