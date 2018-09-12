@@ -1,34 +1,21 @@
-#include <cstdlib>
-#include <stdio.h>
-#include <new>
 
-#include <execinfo.h>
+#include "../include/loggable_memory_management.h"
 
 namespace debug {
 
-  std::size_t alloc_counter = 0;
+  std::size_t alloc_counter      = 0;
 
   void* malloc(std::size_t size)  
   {
-      /*
-      void *bt_array[2];
-      backtrace(bt_array, 2);
-
-      // print out all the frames to stderr
-      printf("Error: signal %s:\n", bt_array[1]);
-        */
-
-
     void* p = std::malloc(size);
-    printf("\tmalloc: %zu %p %zu\n", ++alloc_counter, p, size);
+    dout << "\tmalloc: " << ++alloc_counter << " " <<  p << " " <<  size << std::endl;
     return p;
   }
 
   void free(void* p) noexcept
   {
-    printf("\tfree: %zu %p\n", --alloc_counter, p);
+    dout << "free: " << --alloc_counter << p << std::endl;
     std::free(p);
-    return;
   }
 }
 

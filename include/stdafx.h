@@ -12,3 +12,10 @@
 
 using namespace std;
 using boost::format;
+
+
+#ifdef DEBUG
+#define dout std::cout
+#else
+#define dout 0 && cout
+#endif

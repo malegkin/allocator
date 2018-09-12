@@ -4,7 +4,7 @@
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -rdynamic")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -rdynamic -DDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     add_definitions(-DBOOST_TEST_DYN_LINK)
 ###
