@@ -8,12 +8,8 @@
 #include <numeric>
 #include <array>
 
-#include "boost/format.hpp"
 
-using namespace std;
-using boost::format;
-
-
+//simple blunt solution for output only in debug build
 #ifdef DEBUG
 #define dout std::cout
 #else

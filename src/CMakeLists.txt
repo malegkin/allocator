@@ -26,11 +26,11 @@ function(add_new_test test_name)
 endfunction()
 
 add_new_test(test_factorial)
-add_new_test(old_test)
+add_new_test(test_simple_list)
 
 ###
 #Main
-    add_executable(${PROJECT_NAME} ${PROJECT_NAME}.cpp )
+    add_executable(${PROJECT_NAME} main.cpp )
     target_link_libraries(  ${PROJECT_NAME} 
                             ${Boost_LIBRARIES}
                             loggable_memory_managment

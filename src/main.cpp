@@ -1,11 +1,11 @@
-#include "../include/stdafx.h"
-#include "../include/factorial.h"
-#include "../include/containers.h"
+#include "stdafx.h"
+#include "factorial.h"
+#include "containers.h"
 
 int main() {
 
     dout << "\n\nmap with default allocator:\n";
-    map<uint8_t, uint64_t> m;
+    std::map<uint8_t, uint64_t> m;
     for (uint8_t i = 0; i < 10; i++) {
         m[i] = factorial(i);
     }
@@ -37,7 +37,7 @@ int main() {
     }
 
     for(auto a: bl) {
-        cout << a << endl;
+        std::cout << a << std::endl;
     }
 
 

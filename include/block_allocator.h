@@ -1,8 +1,7 @@
 #pragma once
 
-#include "stdafx.h"
 #include <stack>
-
+#include "stdafx.h"
 #include "loggable_memory_management.h"
 
 template < typename T, size_t item_per_block = 10>
@@ -15,7 +14,7 @@ public:
     using const_reference   = const T&;
 
     class block_t {
-        std::unique_ptr<T, function<void(T*)>> _ptr;
+        std::unique_ptr<T, std::function<void(T*)>> _ptr;
         std::array<T*, item_per_block> _available_cells;
 
     public:
@@ -79,7 +78,7 @@ public:
 
     T* allocate( size_t n ){
         if (n != 1)
-            throw new invalid_argument( "allocate only one block per call" );
+            throw new std::invalid_argument( "Sorry, cureent version cat to allocate only one block per call" );
 
         if ( _available_cells.empty() ){
             _allocate_block();
@@ -109,7 +108,7 @@ public:
 
     template <typename U, typename ... Args>
     void construct (U* p, Args&& ... args) {
-        new(p) U( forward<Args> ( args ) ... ); 
+        new(p) U( std::forward<Args> ( args ) ... );
     }
 
     void destroy(T *p){

@@ -1,12 +1,13 @@
 #pragma once
 
+#ifdef DEBUG
+
 #include "stdafx.h"
 
 #include <stdint.h>
 #include <cstddef>
 #include <new>
 
-#ifdef DEBUG
 
 namespace debug {
 
@@ -15,8 +16,6 @@ namespace debug {
     void free(void* p) noexcept;
 
 } // namespace my
-
-
 
 extern "C++" {
 

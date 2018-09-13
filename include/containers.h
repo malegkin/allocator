@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////
 // block_allocated_map
 template < typename Key, typename T >
-using block_allocated_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
+using block_allocated_map = std::map< Key, T, std::less<Key>, block_allocator< std::pair< const Key, T >, 10 >>;
 
 
 /////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ struct simple_list_node
 };
 
 template <typename T>
-struct simple_list_iterator: public iterator< forward_iterator_tag, simple_list_node<T> >
+struct simple_list_iterator: public std::iterator< std::forward_iterator_tag, simple_list_node<T> >
 {
     using node_t            = simple_list_node<T>;
     using node_pointer_t    = simple_list_node<T>*;
@@ -60,7 +60,7 @@ private:
 };
 
 
-template <typename T, typename _Alloc = allocator< T >>
+template <typename T, typename _Alloc = std::allocator< T >>
 struct simple_list {
     using node_t            = simple_list_node<T>;
     using node_pointer_t    = simple_list_node<T>*;
