@@ -1,6 +1,6 @@
-#include "../include/stdafx.h"
-#include "../include/factorial.h"
-#include "../include/block_allocator.h"
+#include "stdafx.h"
+#include "factorial.h"
+#include "block_allocator.h"
 
 #define BOOST_TEST_MODULE test_allocator
 #include <boost/test/unit_test.hpp>

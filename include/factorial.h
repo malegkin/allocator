@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "stdafx.h"
 constexpr uint64_t factorial(const uint64_t n) { 
     //factorial of number greater than 22 exceeds the maximum allowable value for uint_64_t 
     if (n > 22)
