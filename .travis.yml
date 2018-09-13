@@ -26,7 +26,6 @@ script:
     - cmake --build .
     - env CTEST_OUTPUT_ON_FAILURE=1 BOOST_TEST_LOG_LEVEL=all cmake --build . --target test
     - cmake --build . --target package
-    - doxygen
 
 deploy:
     - provider: script
