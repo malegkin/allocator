@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <new>
 
+#ifdef DEBUG
+
 namespace debug {
 
     extern std::size_t alloc_counter;
@@ -36,3 +38,4 @@ extern "C++" {
 
 } // extern "C++"
 
+#endif

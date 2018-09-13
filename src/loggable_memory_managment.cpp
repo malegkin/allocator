@@ -1,6 +1,8 @@
 
 #include "../include/loggable_memory_management.h"
 
+#ifdef DEBUG
+
 namespace debug {
 
   std::size_t alloc_counter      = 0;
@@ -78,3 +80,6 @@ extern "C++" {
 
 
 }
+
+
+#endif

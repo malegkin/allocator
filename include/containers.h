@@ -9,95 +9,97 @@ template < typename Key, typename T >
 using block_allocated_map = map< Key, T, less<Key>, block_allocator< pair< const Key, T >, 10 >>;
 
 
-
 /////////////////////////////////////////////////////////////////
 //template <typename T, typename _Alloc = block_allocator<T, 10 >>
 template <typename T>
-struct otus_list_node {
+struct simple_list_node
+{
+    T                   _value;
+    simple_list_node*   _next;
 
-    using value_type = T;
-
-    value_type      value_;
-    otus_list_node* next_;
-
-    otus_list_node(const T& value)
-            : value_( value )
-            , next_( nullptr )
+    simple_list_node(const T& value)
+            : _value( value )
+            , _next( nullptr )
     {}
 };
 
 template <typename T>
-struct otus_list_iterator: public iterator< forward_iterator_tag, otus_list_node<T> >
+struct simple_list_iterator: public iterator< forward_iterator_tag, simple_list_node<T> >
 {
-    using node_type         = otus_list_node<T>;
-    using node_pointer      = otus_list_node<T>*;
-    typedef typename otus_list_node<T>::value_type node_value_type;
+    using node_t            = simple_list_node<T>;
+    using node_pointer_t    = simple_list_node<T>*;
+    using node_value_t      = T;
 
-    otus_list_iterator( node_pointer ptr ) : ptr_( ptr ) { }
+    simple_list_iterator( node_pointer_t p )
+        : _ptr( p )
+        { }
 
-    otus_list_iterator operator++() {
-        otus_list_iterator out = *this;
-        ptr_ = ptr_->next_;
+    simple_list_iterator operator++() {
+        simple_list_iterator out = *this;
+        _ptr = _ptr->_next;
         return out;
     }
 
-    node_value_type operator*() {
-        return ptr_->value_ ;
+    node_value_t operator*()    {
+        return _ptr->_value ;
     }
 
-    node_value_type* operator->() {
-        return &(ptr_->value_);
+    node_value_t* operator->()  {
+        return &(_ptr->_value);
     }
 
-    bool operator==(const otus_list_iterator& rhs){
-        return ptr_ == rhs.ptr_;
+    bool operator==(const simple_list_iterator& rhs){
+        return _ptr == rhs._ptr;
     }
-    bool operator!=(const otus_list_iterator& rhs){
-        return ptr_ != rhs.ptr_;
+    bool operator!=(const simple_list_iterator& rhs){
+        return !operator==(rhs);
     }
 
-    node_pointer ptr_;
+private:
+    node_pointer_t _ptr;
 };
 
 
 template <typename T, typename _Alloc = allocator< T >>
-class otus_list {
-    using node_type     = otus_list_node<T>;
-    using node_pointer  = otus_list_node<T>*;
+struct simple_list {
+    using node_t            = simple_list_node<T>;
+    using node_pointer_t    = simple_list_node<T>*;
+    using node_allocator_t  = typename _Alloc::template rebind< node_t >::other;
 
-    node_pointer head, tail;
-    size_t elements;
+    using reference         = T&;
+    using const_reference   = const T&;
 
-    typedef typename _Alloc::template rebind< otus_list_node<T> >::other node_allocator_type;
-    node_allocator_type alloc;
-
-public:
-    otus_list():
-            head( nullptr ),
-            tail( nullptr )
+    simple_list()
+        : _head_p( nullptr )
+        , _tail_p( nullptr )
     {}
 
-    void push_back(const T& data){
-        node_pointer pn = alloc.allocate( 1 );
-        alloc.construct( pn, data );
+    void push_back(const T& data)
+    {
+        node_pointer_t np = _node_allocator.allocate( 1 );
+        _node_allocator.construct( np, data );
 
-        if ( head == nullptr)
-            head = pn;
+        if ( _tail_p )
+            _tail_p->_next = np;
 
-        if(tail != nullptr)
-            tail->next_ = pn;
-
-        tail = pn;
-        elements++;
+        _head_p = ( _head_p ) ? _head_p : np;
+        _tail_p = np;
+        _size++;
     }
 
-    otus_list_iterator<T> begin(){
-        return otus_list_iterator<T>( head );
+    simple_list_iterator<T> begin(){
+        return simple_list_iterator<T>( _head_p );
     }
 
-    otus_list_iterator<T> end(){
-        return otus_list_iterator<T>( nullptr );
+    simple_list_iterator<T> end(){
+        return simple_list_iterator<T>( nullptr );
     }
+
+
+private:
+    node_pointer_t  _head_p, _tail_p;
+    size_t          _size;
+    node_allocator_t _node_allocator;
 
 };
 
@@ -105,5 +107,5 @@ public:
 /////////////////////////////////////////////////////////////////
 // block_allocated_list
 template < typename T >
-using block_allocated_list = otus_list< T, block_allocator< T, 10 >>;
+using block_allocated_simple_list = simple_list< T, block_allocator< T, 10 >>;
 

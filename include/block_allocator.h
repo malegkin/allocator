@@ -21,7 +21,11 @@ public:
     public:
 
         block_t()
+#ifdef DEBUG
         : _ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
+#else
+        : _ptr( reinterpret_cast<T*>( malloc( sizeof(T) * item_per_block )), [](T* p){ free(p); })
+#endif
         {
             size_t n = 0;
             std::generate_n(begin(_available_cells), item_per_block, [&n, this](){return _ptr.get() + n++;});

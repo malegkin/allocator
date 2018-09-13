@@ -24,14 +24,14 @@ int main() {
 
 
     dout << "\n\notus list:\n";
-    otus_list< int > ol;
+    simple_list< int > ol;
     for (int i = 0; i < 10; i++) {
         ol.push_back( i );
     }
 
 
     dout << "\n\nlist with block allocator:\n";
-    block_allocated_list< int > bl;
+    block_allocated_simple_list< int > bl;
     for (int i = 0; i < 10; i++) {
         bl.push_back( i );
     }
