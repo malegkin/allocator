@@ -11,8 +11,8 @@ if [ $# -eq 1 ] && [ $1 == "full" ]; then
     cd "$BUILD_DIR"
 
 #    cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON ..
-#    cmake ..
-    cmake -DCMAKE_BUILD_TYPE=Debug ..
+    cmake ..
+#    cmake -DCMAKE_BUILD_TYPE=Debug ..
 else
     cd "$BUILD_DIR"
 fi

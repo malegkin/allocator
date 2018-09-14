@@ -15,7 +15,19 @@
 
 ###
 #Tests
-function(add_new_test test_name)
+function(generate_tests test_name list_t)
+
+    set(LIST_FOR_TEST "${list_t}")
+    set(TEST_NAME "${test_name}")
+
+    configure_file(
+            ${CMAKE_SOURCE_DIR}/src/test/test_list.cpt
+            ${CMAKE_SOURCE_DIR}/src/test/test_${test_name}.cpp
+            @ONLY
+    )
+endfunction()
+
+    function(add_new_test test_name)
     add_executable(${test_name} "${CMAKE_SOURCE_DIR}/src/test/${test_name}.cpp")
     add_test(${test_name} ${test_name} )
     set_tests_properties(${test_name} PROPERTIES TIMEOUT 30 )
@@ -25,8 +37,14 @@ function(add_new_test test_name)
             )
 endfunction()
 
+
+generate_tests(list "std::list<uint64_t>")
+generate_tests(simple_list "simple_list<uint64_t>")
+generate_tests(block_allocated_simple_list "block_allocated_simple_list<uint64_t>")
 add_new_test(test_factorial)
+add_new_test(test_list)
 add_new_test(test_simple_list)
+add_new_test(test_block_allocated_simple_list)
 
 ###
 #Main

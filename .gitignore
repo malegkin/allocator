@@ -1,4 +1,7 @@
-cmake-build-debug
+src/test/test_list.cpp
+src/test/test_simple_list.cpp
+src/test/test_block_allocated_simple_list.cpp
+cmake-build-*
 allocator.code-workspace
 tmp
 .idea
