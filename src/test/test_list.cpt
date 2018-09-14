@@ -1,8 +1,10 @@
-#define BOOST_TEST_MODULE test_@TEST_NAME@
-#include <boost/test/unit_test.hpp>
+
 
 #include "stdafx.h"
 #include "containers.h"
+
+#define BOOST_TEST_MODULE test_@TEST_NAME@
+#include <boost/test/unit_test.hpp>
 
 struct global_fixture {
     global_fixture()

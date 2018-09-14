@@ -1,8 +1,11 @@
 #pragma once
+#include "stdafx.h"
+
 
 #include <stack>
 #include <memory>
-#include "stdafx.h"
+#include <functional>
+
 #include "loggable_memory_management.h"
 
 template < typename T, size_t item_per_block = 10>
