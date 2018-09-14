@@ -8,6 +8,20 @@
 
 #include "loggable_memory_management.h"
 
+#ifdef DEBUG
+    #define dmalloc debug::malloc
+    #define dfree   debug::free
+#else
+    #define dmalloc malloc
+    #define dfree   free
+#endif
+
+static struct {
+    size_t total_allocated_blocks   = 0;
+    size_t total_deallocated_blocks = 0;
+} _block_statistics;
+
+
 template < typename T, size_t item_per_block = 10>
 class block_allocator {
 public:
@@ -17,6 +31,14 @@ public:
     using reference         = T&;
     using const_reference   = const T&;
 
+    struct {
+        size_t allocated_cells    = 0;
+        size_t deallocated_cells  = 0;
+
+        size_t constructed        = 0;
+        size_t destructed         = 0;
+    } _statistics;
+
     class block_t {
         std::unique_ptr<T, std::function<void(T*)>> _ptr;
         std::array<T*, item_per_block> _available_cells;
@@ -24,12 +46,10 @@ public:
     public:
 
         block_t()
-#ifdef DEBUG
-        : _ptr( reinterpret_cast<T*>( debug::malloc( sizeof(T) * item_per_block )), [](T* p){ debug::free(p); })
-#else
-        : _ptr( reinterpret_cast<T*>( malloc( sizeof(T) * item_per_block )), [](T* p){ free(p); })
-#endif
+        : _ptr( reinterpret_cast<T*>( dmalloc( sizeof(T) * item_per_block )), [](T* p){ dfree(p); })
         {
+            _block_statistics.total_allocated_blocks++;
+
             size_t n = 0;
             std::generate_n(begin(_available_cells), item_per_block, [&n, this](){return _ptr.get() + n++;});
             dout << "block: init unique_pointer: " << _ptr.get() << std::endl;
@@ -41,21 +61,20 @@ public:
             dout << "block: move unique_pointer: " << _ptr.get() << std::endl;
         }
 
-        const T* get_first_cell(){
-            return _ptr.get();
-        }
-
         std::array<T*, item_per_block>& get_available_cells() {
             return _available_cells;
         }
 
-
         ~block_t()
         {
-            if (_ptr.get())
+            if (_ptr.get()) {
+                _block_statistics.total_deallocated_blocks++;
                 dout << "block: destroy unique_pointer: " << _ptr.get() << std::endl;
+            }
         }
     };
+
+
 
     std::list<block_t>  _blocks;
     std::stack<T*>      _available_cells;
@@ -88,11 +107,13 @@ public:
             _allocate_block();
         }
 
-
         auto out = std::move(_available_cells.top());
         _available_cells.pop();
 
         dout << "block_allocator: _allocate: " << _available_cells.size() << " " << out << std::endl;
+
+        _statistics.allocated_cells++;
+
         return std::move(out);
 
     }
@@ -100,6 +121,9 @@ public:
 
     void deallocate(T *p, size_t n){
         dout << "deallocate: " << p << " n: " << n << std::endl;
+
+        _statistics.deallocated_cells++;
+
         _available_cells.push(p);
     }
 
@@ -112,10 +136,13 @@ public:
 
     template <typename U, typename ... Args>
     void construct (U* p, Args&& ... args) {
+        _statistics.constructed++;
+
         new(p) U( std::forward<Args> ( args ) ... );
     }
 
     void destroy(T *p){
+        _statistics.destructed++;
         p->~T();
     }
 };
