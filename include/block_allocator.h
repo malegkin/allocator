@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stack>
+#include <memory>
 #include "stdafx.h"
 #include "loggable_memory_management.h"
 

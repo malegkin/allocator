@@ -9,6 +9,7 @@
 #include <array>
 
 
+
 //simple blunt solution for output only in debug build
 #ifdef DEBUG
 #define dout std::cout
