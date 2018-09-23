@@ -1,70 +1,45 @@
 
 
 #include "stdafx.h"
+#include <random>
+#include <algorithm>
 #include "containers.h"
 
-#define BOOST_TEST_MODULE test_list
+
+#define BOOST_TEST_MODULE test_allocator
 #include <boost/test/unit_test.hpp>
+#include <block_allocator.h>
 
-struct global_fixture {
-    global_fixture()
-    {
-        for(int i = 0; i < 22; i++){
-            sl64.push_back(i);
+
+BOOST_AUTO_TEST_SUITE( ts_allocator )
+
+
+
+    BOOST_AUTO_TEST_CASE( simple_check_memory_leak ) {
+
+        {
+            block_allocator<uint64_t, 5> ba;
+            std::array<uint64_t*, 100> bap;
+            std::array<uint64_t, 100> is;
+
+            std::generate_n(begin(bap), 100, [&]() { return ba.allocate(1); });
+            uint64_t u = 0;
+            std::generate_n(begin(is), 100, [&]() { return u++; });
+
+            std::random_device rd;
+            std::mt19937 g(rd());
+            std::shuffle(begin(is), end(is), g);
+
+            for(int i =0; i < 90; i++){
+                ba.deallocate(bap[is[i]], 1);
+            }
+
+            BOOST_REQUIRE(ba._statistics.allocated_cells - ba._statistics.deallocated_cells == 10);
+            BOOST_REQUIRE(ba._available_cells.size() == 90);
         }
-    }
 
-    std::list<uint64_t> sl64;
+        BOOST_REQUIRE(_block_statistics.total_allocated_blocks == _block_statistics.total_deallocated_blocks);
 
-};
-
-BOOST_FIXTURE_TEST_SUITE(test_simple_list, global_fixture );
-
-    BOOST_AUTO_TEST_CASE( is_empty_list_begin_and_end_iterators_equal ) {
-        std::list<uint64_t>  empty_list;
-        BOOST_REQUIRE( empty_list.begin() == empty_list.end() );
-    }
-
-    BOOST_AUTO_TEST_CASE( check_push_back ) {
-        std::list<uint64_t>  empty_list;
-        uint64_t in = 555;
-        empty_list.push_back( in );
-        empty_list.push_back( std::move(in) );
-
-        BOOST_REQUIRE( empty_list.back() == 555 );
-    }
-
-    BOOST_AUTO_TEST_CASE( is_begin_iterator_point_to_first_element )    {
-        BOOST_REQUIRE( *(sl64.begin()) == 0  );
-    }
-
-    BOOST_AUTO_TEST_CASE( is_end_iterator_point_to_next_after_last_element )    {
-        BOOST_REQUIRE( *(--sl64.end()) == 21  );
-    }
-
-    BOOST_AUTO_TEST_CASE( is_list_size_correct )    {
-        BOOST_REQUIRE( (sl64.size()) == 22  );
-    }
-
-    BOOST_AUTO_TEST_CASE( is_iterator_return_reference )    {
-        *(sl64.begin()) = 123;
-        *(--sl64.end()) = 321;
-
-        BOOST_REQUIRE( *(sl64.begin()) == 123  );
-        BOOST_REQUIRE( *(--sl64.end()) == 321  );
-    }
-
-    BOOST_AUTO_TEST_CASE( check_front_back )    {
-        const uint64_t cf = sl64.front();
-        const uint64_t cb = sl64.back();
-
-        sl64.front() = 123;
-        sl64.back()  = 321;
-
-        BOOST_REQUIRE( cf == 0 );
-        BOOST_REQUIRE( cb == 21 );
-        BOOST_REQUIRE( sl64.front() == 123 );
-        BOOST_REQUIRE( sl64.back()  == 321 );
     }
 
 

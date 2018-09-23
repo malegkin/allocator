@@ -33,11 +33,21 @@ BOOST_FIXTURE_TEST_SUITE(test_simple_list, global_fixture );
         BOOST_REQUIRE( *(--sl64.end()) == 21  );
     }
 
+    BOOST_AUTO_TEST_CASE( check_list_insert_foo ) {
+        sl64.insert( std::begin(sl64), 111);
+        sl64.insert( ++ ++ std::begin(sl64), 222);
+        sl64.insert( std::end(sl64),   333);
+
+        std::vector<uint64_t> etalon = {111, 0, 222, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 333};
+
+        BOOST_CHECK_EQUAL_COLLECTIONS( std::begin(etalon), std::end(etalon), std::begin(sl64), std::end(sl64) );
+    }
+
     BOOST_AUTO_TEST_CASE( is_list_size_correct )    {
         BOOST_REQUIRE( (sl64.size()) == 22  );
     }
 
-    BOOST_AUTO_TEST_CASE( is_iterator_get_reference )    {
+    BOOST_AUTO_TEST_CASE( is_iterator_return_reference )    {
         *(sl64.begin()) = 123;
         *(--sl64.end()) = 321;
 
@@ -45,8 +55,7 @@ BOOST_FIXTURE_TEST_SUITE(test_simple_list, global_fixture );
         BOOST_REQUIRE( *(--sl64.end()) == 321  );
     }
 
-
-    BOOST_AUTO_TEST_CASE( check_front_end )    {
+    BOOST_AUTO_TEST_CASE( check_front_back )    {
         const uint64_t cf = sl64.front();
         const uint64_t cb = sl64.back();
 
@@ -59,5 +68,14 @@ BOOST_FIXTURE_TEST_SUITE(test_simple_list, global_fixture );
         BOOST_REQUIRE( sl64.back()  == 321 );
     }
 
+
+    BOOST_AUTO_TEST_CASE( check_pop )    {
+        sl64.pop_front();
+        BOOST_REQUIRE( sl64.front() == 1 );
+        sl64.pop_back();
+        BOOST_REQUIRE( sl64.back()  == 20 );
+    }
+
+    //struct memory_leak_tester
 
 BOOST_AUTO_TEST_SUITE_END()
