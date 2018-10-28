@@ -1,43 +1,73 @@
 #include "stdafx.h"
 #include "factorial.h"
 #include "containers.h"
+#include "traits.h"
+
+
+template < typename  T>
+T & stuff_n(T & in, size_t n = 10){
+    size_t N = n;
+
+    std::generate_n( std::inserter(in, std::begin(in)), n, [&](){
+        n--;
+        if constexpr (is_map_v<T>) {
+            return std::make_pair(n, factorial(n));
+        } else if constexpr (is_container_v<T>){
+            return N - n - 1;
+        } else {
+            throw new std::bad_function_call;
+        }
+    });
+
+    return in;
+};
+
+
+template < typename  T>
+void dump(const T & in, std::ostream & os = std::cout ){
+    for(auto a: in){
+        if constexpr (is_map_v<T>){
+            os << a.first << " " << a.second << std::endl;
+        } else if constexpr (is_container_v<T>){
+            os << a << std::endl;
+        } else {
+            throw new std::bad_function_call;
+        }
+    }
+};
+
+
 
 int main() {
 
     try {
         dout << "\n\nmap with default allocator:\n";
-        std::map<uint8_t, uint64_t> m;
-        for (uint8_t i = 0; i < 10; i++) {
-            m[i] = factorial(i);
-        }
+        //* создание экземпляра std::map
+        std::map< uint32_t, uint64_t > m;
+        //* заполнение 10 элементами, где ключ это число от 0 до 9, а значение - факториал ключа
+        stuff_n(m);
 
         dout << "\n\nmap with block allocator:\n";
+        //* создание экземпляра std::map с новым аллокатором ограниченным 10 элементами
         block_allocated_map<uint32_t, uint64_t> bam;
-
-        for (uint32_t i = 0; i < 10; i++) {
-            bam[i] = factorial(i);
-        }
-
-        for (auto a: bam) {
-            std::cout << a.first << " " << a.second << std::endl;
-        }
-
+        //* заполнение 10 элементами, где ключ это число от 0 до 9, а значение - факториал ключа
+        stuff_n(bam);
+        //* вывод на экран всех значений (ключ и значение разделены пробелом) хранящихся в контейнере
+        dump(m);
 
         dout << "\n\notus list:\n";
-        simple_list<int> ol;
-        for (int i = 0; i < 10; i++) {
-            ol.push_back(i);
-        }
+        //* создание экземпляра своего контейнера для хранения int
+        simple_list<int> sl;
+        //* заполнение 10 элементами от 0 до 9
+        stuff_n(sl);
 
         dout << "\n\nlist with block allocator:\n";
-        block_allocated_simple_list<int> bl;
-        for (int i = 0; i < 10; i++) {
-            bl.push_back(i);
-        }
-
-        for (auto a: bl) {
-            std::cout << a << std::endl;
-        }
+        //* создание экземпляра своего контейнера для хранения int с новым аллокатором ограниченным 10 элементами
+        block_allocated_simple_list<int> basl;
+        //* заполнение 10 элементами от 0 до 9
+        stuff_n(basl);
+        //* вывод на экран всех значений хранящихся в контейнере
+        dump(basl);
 
     }   catch (std::exception& ex) {
         std::cerr << ex.what() << std::endl;

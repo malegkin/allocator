@@ -103,7 +103,7 @@ struct simple_list   {
     using difference_type   = std::ptrdiff_t;
     using size_type         = std::size_t;
 
-
+    using allocator_type    = _Alloc;
 
     using node_t            = simple_list_node<T>;
     using node_pointer_t    = simple_list_node<T>*;
